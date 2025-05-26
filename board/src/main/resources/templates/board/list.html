@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>게시판</title>
+<div th:replace="fragments/header :: header"></div>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<body>
+	<div class="container mt-5">
+		<h2>게시판</h2>
+		<div class = "mb-3">
+			<a href="/board/write" class="btn btn-primary">글쓰기</a>		
+		</div>
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>번호</th>
+					<th>제목</th>
+					<th>작성자</th>
+					<th>작성일</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="board : ${boards}">
+					<td th:text="${board.rnum}"></td>
+					<td>
+						<a th:href="@{/board/view/{id}(id=${board.id})}" th:text="${board.title}"></a>
+					</td>
+					<td th:text="${board.writer}"></td>
+					<td th:text="${#temporals.format(board.createdDate, 'yyyy-MM-dd HH:mm')}"></td>
+				</tr>			
+			</tbody>
+		</table>
+
+		<!-- 페이징 처리 -->
+		<nav th:if="${pageInfo.totalPages > 0}">
+			<ul class="pagination justify-content-center">
+				<!-- 이전 페이지 -->
+				<li class="page-item" th:classappend="${pageInfo.pageNum == 1} ? 'disabled'">
+					<a class="page-link" th:href="@{/board/list(pageNum=${pageInfo.pageNum - 1})}" aria-label="Previous">
+						<span aria-hidden="true">&laquo;</span>
+					</a>
+				</li>
+				
+				<!-- 페이지 번호 -->
+				<li class="page-item" th:each="pageNum : ${#numbers.sequence(pageInfo.startPage, pageInfo.endPage)}"
+					th:classappend="${pageNum == pageInfo.pageNum} ? 'active'">
+					<a class="page-link" th:href="@{/board/list(pageNum=${pageNum})}" th:text="${pageNum}"></a>
+				</li>
+				
+				<!-- 다음 페이지 -->
+				<li class="page-item" th:classappend="${pageInfo.pageNum == pageInfo.totalPages} ? 'disabled'">
+					<a class="page-link" th:href="@{/board/list(pageNum=${pageInfo.pageNum + 1})}" aria-label="Next">
+						<span aria-hidden="true">&raquo;</span>
+					</a>
+				</li>
+			</ul>
+		</nav>
+	</div>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

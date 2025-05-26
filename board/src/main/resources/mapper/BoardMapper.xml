@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.BoardMapper">
+	<select id="findAllWithPaging" resultType="BoardDto">
+		SELECT *
+		FROM (
+			SELECT ROWNUM as rnum, b.*
+			FROM (
+				SELECT ID
+					 , TITLE
+					 , CONTENT
+					 , WRITER
+					 , CREATED_DATE as createdDate
+				FROM BOARD 
+				ORDER BY CREATED_DATE
+			) b
+			WHERE ROWNUM <![CDATA[ <= ]]> #{offset} + #{pageSize}
+		)
+		WHERE rnum <![CDATA[ > ]]> #{offset}
+		ORDER BY rnum desc
+	</select>
+	<select id="getTotalCount" resultType="int">
+		SELECT COUNT(*) FROM BOARD
+	</select>
+	<select id="findById" resultType="BoardDto">
+		SELECT ID
+        	 , TITLE
+        	 , CONTENT
+        	 , WRITER
+			 , CREATED_DATE
+		  FROM BOARD
+		 WHERE ID = #{id}
+	</select>
+	
+	<insert id="insertBoard" parameterType="BoardDto">
+		<selectKey keyProperty="id" resultType="long" order="BEFORE">
+			SELECT BOARD_SEQ.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO board (id, title, content, writer, created_date, modified_date)
+		VALUES (#{id}, #{title}, #{content}, #{writer}, SYSDATE, SYSDATE)
+	</insert>
+
+	<update id="updateBoard" parameterType="BoardDto">
+		UPDATE board
+		SET title = #{title},
+			content = #{content},
+			modified_date = SYSDATE
+		WHERE id = #{id}
+	</update>
+
+	<delete id="deleteBoard">
+		DELETE FROM board
+		WHERE id = #{id}
+	</delete>
+
+	<!-- 댓글 관련 SQL -->
+	<insert id="insertComment" parameterType="CommentDto">
+		INSERT INTO COMMENTS (
+			ID,
+			BOARD_ID,
+			PARENT_ID,
+			CONTENT,
+			WRITER,
+			CREATED_DATE,
+			MODIFIED_DATE,
+			DEPTH
+		) VALUES (
+			COMMENT_SEQ.NEXTVAL,
+			#{boardId,jdbcType=NUMERIC},
+			#{parentId,jdbcType=NUMERIC},
+			#{content,jdbcType=VARCHAR},
+			#{writer,jdbcType=VARCHAR},
+			SYSDATE,
+			SYSDATE,
+			#{depth,jdbcType=NUMERIC}
+		)
+	</insert>
+
+</mapper>

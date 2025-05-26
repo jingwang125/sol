@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="header">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        .header-wrapper {
+            font-family: 'Noto Sans KR', sans-serif;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 9999;
+            background-color: #ffffff;
+        }
+
+        .header {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 0.8rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 60px;
+        }
+
+        .left-menu {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .left-menu a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            font-size: 1.1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .left-menu a:hover {
+            background-color: #f8f9fa;
+            color: #007bff;
+        }
+
+        .right-menu {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            margin-left: auto;
+        }
+
+        .user-info {
+            margin-right: 1rem;
+            color: #666;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .right-menu a {
+            text-decoration: none;
+            color: #fff;
+            padding: 0.6rem 1.5rem;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            display: inline-block;
+        }
+
+        .login-btn {
+            background-color: #007bff;
+        }
+
+        .login-btn:hover {
+            background-color: #0056b3;
+            transform: translateY(-1px);
+        }
+
+        .logout-btn {
+            background-color: #dc3545;
+        }
+
+        .logout-btn:hover {
+            background-color: #c82333;
+            transform: translateY(-1px);
+        }
+
+        /* Add margin to main content to prevent header overlap */
+        body {
+            margin-top: 60px;
+            position: relative;
+        }
+    </style>
+</head>
+
+<div class="header-wrapper">
+    <header class="header">
+        <div class="left-menu">
+            <a href="/">홈</a>
+            <a href="/board/list">게시판</a>
+        </div>
+        <div class="right-menu">
+            <div th:if="${session.user}" class="user-info">
+                <span th:text="${session.user.name}"></span>님 환영합니다
+            </div>
+            <div th:if="${session.user == null}">
+                <a href="/user/login" class="login-btn">로그인</a>
+            </div>
+            <div th:if="${session.user != null}">
+                <a href="/user/logout" class="logout-btn">로그아웃</a>
+            </div>
+        </div>
+    </header>
+</div> 
